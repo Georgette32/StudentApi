@@ -1,4 +1,6 @@
-﻿namespace StudentApi.Models
+﻿
+
+namespace StudentApi.Models
 {
     public class Student
     {

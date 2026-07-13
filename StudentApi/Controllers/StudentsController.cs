@@ -1,33 +1,45 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using StudentApi.Models;
+using StudentApi.Services;
 using System.Reflection.Metadata;
 using System.Xml.Linq;
-using StudentApi.Models;
 
 namespace StudentApi.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+
     public class StudentsController : ControllerBase
     {
-        List<Student> students = new List<Student>()
+        private readonly StudentService _service;
+        private readonly MessageService _messageService;
+        private readonly IConfiguration _configuration;
+        public StudentsController(StudentService service, MessageService messageService, IConfiguration configuration)
         {
-            new Student{Id=1,Name="John",Age=20,Departmint="Computer Science"},
-            new Student{Id=2,Name="Alice",Age=22,Departmint="Mathematics"},
-            new Student{Id=3,Name="Bob",Age=21,Departmint="Physics"},
-            new Student{Id=4,Name="Eve",Age=23,Departmint="Chemistry"},
-            new Student{Id=5,Name="Charlie",Age=24,Departmint="Biology"}
-        };
+            _service = service;
+            _messageService = messageService;
+            _configuration = configuration;
+        }
 
+        [HttpGet("app - info")]
+        public IActionResult GetAppInfo() {
+            var appname = _configuration["AppSettings:AppName"];
+            var developer = _configuration["AppSettings:Developer"];
+            return Ok($"{appname}/nDeveloped By: {developer}");
+
+
+
+        }
         [HttpGet("all")]
         public IActionResult GetAllStudents()
         {
-            return Ok(students);
+            return Ok(_service.GetAllStudents());
         }
 
         [HttpGet("getstudent/{id}")]
         public IActionResult GetStudentById(int id)
         {
-            var student = students.FirstOrDefault(s => s.Id == id);
+            var student = _service.GetStudentById(id);
             if (student == null)
             {
                 return NotFound($"Student with Id = {id} not found");
@@ -37,8 +49,8 @@ namespace StudentApi.Controllers
 
         [HttpGet("search")]
         public IActionResult GetStudentByName(string name) {
-            var studentname = students.FirstOrDefault(s => s.Name == name);
-           if (studentname == null)
+            var studentname = _service.GetAllStudents().FirstOrDefault(s => s.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            if (studentname == null)
             {
                 return NotFound($"Student with Name = {name} not found");
             }
@@ -46,7 +58,7 @@ namespace StudentApi.Controllers
 
         }
         [HttpGet("department/{department}")]
-        public IActionResult GetStudentByDepartment(string department)
+       /* public IActionResult GetStudentByDepartment(string department)
         {
 
             var studentDepartment = students.Where(s=>s.Departmint == department).ToList();
@@ -56,23 +68,23 @@ namespace StudentApi.Controllers
             }
 
             return Ok(studentDepartment);
-        }
+        }*/
 
         [HttpPost]
 
         public IActionResult AddStudent(Student student)
         {
-            students.Add(student);
+            _service.AddStudent(student);
             return Ok($"Student with Id = {student.Id} added successfully");
         }
 
         [HttpGet("count")]
         public IActionResult GetStudentCount()
         {//int count = students.Count;
-            return Ok(students.Count());
+            return Ok(_service.GetStudentsCount());
            // return Ok(count);
         }
-        [HttpGet("average-age")]
+      /*  [HttpGet("average-age")]
         public IActionResult GetAverage() { 
       
             return Ok(students.Average(s => s.Age));
@@ -83,7 +95,7 @@ namespace StudentApi.Controllers
         {
            var oldestStudent = students.MaxBy(s => s.Age);
             return Ok(oldestStudent);
-        }
+        }*/
 
         [HttpGet]
         public string Get()
