@@ -48,7 +48,7 @@ namespace StudentApi.Controllers
         }
 
         [HttpGet("search")]
-        public IActionResult GetStudentByName(string name) {
+        public IActionResult GetStudentByName([FromQuery] string name) {
             var studentname = _service.GetAllStudents().FirstOrDefault(s => s.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
             if (studentname == null)
             {
@@ -57,22 +57,43 @@ namespace StudentApi.Controllers
             return Ok(studentname);
 
         }
-        [HttpGet("department/{department}")]
-       /* public IActionResult GetStudentByDepartment(string department)
-        {
+        // [HttpGet("department/{department}")]
+        /* public IActionResult GetStudentByDepartment(string department)
+         {
 
-            var studentDepartment = students.Where(s=>s.Departmint == department).ToList();
-            if (!studentDepartment.Any())
+             var studentDepartment = students.Where(s=>s.Departmint == department).ToList();
+             if (!studentDepartment.Any())
+             {
+                 return NotFound($"No students found in {department} department");
+             }
+
+             return Ok(studentDepartment);
+         }*/
+        [HttpPut("{id}")]
+        public IActionResult PutStudent([FromBody] Student student, [FromRoute] int id)
+        { var result = _service.UpdateStudent(id, student);
+            if (!result)
             {
-                return NotFound($"No students found in {department} department");
+                return NotFound();
             }
+            return Ok("Student Updated Successfully");
+        }
+        [HttpDelete("{id}")]
+        public IActionResult DeleteStudent([FromRoute] int id) { 
+        var result = _service.DeleteStudent(id);
+            if (!result)
+            {
+                return NotFound();
+            }
+            return Ok("Student Deleted Successfully");
 
-            return Ok(studentDepartment);
-        }*/
+
+
+        }
 
         [HttpPost]
 
-        public IActionResult AddStudent(Student student)
+        public IActionResult AddStudent([FromBody] Student student)
         {
             _service.AddStudent(student);
             return Ok($"Student with Id = {student.Id} added successfully");
@@ -108,7 +129,7 @@ namespace StudentApi.Controllers
             return "Welcome to the Student API!";
         }
         [HttpGet("{id}")]
-        public string GetStudentByid(int id)
+        public string GetStudentByid([FromRoute] int id)
         {
             // For demonstration purposes, return the student ID
             return $"Student Id = {id}";

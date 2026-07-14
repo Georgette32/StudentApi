@@ -17,8 +17,9 @@ namespace StudentApi.Services
         {
             return students;
         }
-        public Student GetStudentById(int id) { 
-        return students.FirstOrDefault(s=> s.Id == id);
+        public Student GetStudentById(int id)
+        {
+            return students.FirstOrDefault(s => s.Id == id);
 
         }
         public void AddStudent(Student student)
@@ -27,8 +28,29 @@ namespace StudentApi.Services
         }
         public int GetStudentsCount()
         {
-                        return students.Count;
+            return students.Count;
         }
- 
-    }
+        public bool UpdateStudent(int id, Student updateStudent)
+        {
+            var student = students.FirstOrDefault(s => s.Id == id);
+            if (student == null)
+            {
+                return false;
+            }
+            student.Age = updateStudent.Age;
+            student.Name = updateStudent.Name;
+            student.Departmint = updateStudent.Departmint;
+            return true;
+        }
+        public bool DeleteStudent(int id)
+        {
+            var student = students.FirstOrDefault(s => s.Id == id);
+            if (student == null)
+            {
+                return false;
+            }
+            students.Remove(student);
+            return true;
+        }
+    } 
 }
