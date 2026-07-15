@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using StudentApi.DTOs;
 using StudentApi.Models;
 using StudentApi.Services;
 using System.Reflection.Metadata;
@@ -70,8 +71,22 @@ namespace StudentApi.Controllers
              return Ok(studentDepartment);
          }*/
         [HttpPut("{id}")]
-        public IActionResult PutStudent([FromBody] Student student, [FromRoute] int id)
-        { var result = _service.UpdateStudent(id, student);
+        public IActionResult PutStudent([FromBody] StudentUpdateDto dto, [FromRoute] int id)
+        { 
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            Student student = new Student
+            {
+                Name = dto.Name,
+                Age = dto.Age,
+                Departmint = dto.Departmint,
+            };
+
+
+
+            var result = _service.UpdateStudent(id, student);
             if (!result)
             {
                 return NotFound();
@@ -93,10 +108,20 @@ namespace StudentApi.Controllers
 
         [HttpPost]
 
-        public IActionResult AddStudent([FromBody] Student student)
+        public IActionResult AddStudent([FromBody] StudentCreateDto dto)
         {
+          if (!ModelState.IsValid) {  return BadRequest(ModelState); }
+            Student student = new Student
+            {
+                Name = dto.Name,
+                Age = dto.Age,
+                Departmint = dto.Departmint,
+
+
+
+            };
             _service.AddStudent(student);
-            return Ok($"Student with Id = {student.Id} added successfully");
+            return Ok("student added succssfully");
         }
 
         [HttpGet("count")]
