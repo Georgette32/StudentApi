@@ -1,3 +1,4 @@
+using StudentApi.Middleware;
 using StudentApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,8 +22,8 @@ if (app.Environment.IsDevelopment())
 }
 
 //app.UseHttpsRedirection();
-
 app.UseAuthorization();
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.MapControllers();
 

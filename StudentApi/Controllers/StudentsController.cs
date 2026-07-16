@@ -38,7 +38,7 @@ namespace StudentApi.Controllers
         }
 
         [HttpGet("getstudent/{id}")]
-        public IActionResult GetStudentById(int id)
+        public ActionResult<Student> GetStudentById(int id)
         {
             var student = _service.GetStudentById(id);
             if (student == null)
@@ -130,18 +130,23 @@ namespace StudentApi.Controllers
             return Ok(_service.GetStudentsCount());
            // return Ok(count);
         }
-      /*  [HttpGet("average-age")]
-        public IActionResult GetAverage() { 
-      
-            return Ok(students.Average(s => s.Age));
-        }
+        /*  [HttpGet("average-age")]
+          public IActionResult GetAverage() { 
 
-        [HttpGet("max-age")]
-        public IActionResult GetMaxAge()
-        {
-           var oldestStudent = students.MaxBy(s => s.Age);
-            return Ok(oldestStudent);
-        }*/
+              return Ok(students.Average(s => s.Age));
+          }
+
+          [HttpGet("max-age")]
+          public IActionResult GetMaxAge()
+          {
+             var oldestStudent = students.MaxBy(s => s.Age);
+              return Ok(oldestStudent);
+          }*/
+        [HttpGet("error")]
+        public IActionResult Errortest() {
+            throw new Exception("Test Exception");
+
+        }
 
         [HttpGet]
         public string Get()
